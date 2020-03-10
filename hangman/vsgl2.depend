@@ -1,0 +1,71 @@
+# depslib dependency file v1.0
+1572218212 source:c:\users\danie\desktop\informatica\vsgl2-master\vsgl2.cpp
+	<iostream>
+	<map>
+	"version.h"
+	"vsgl2.h"
+
+1572218212 c:\users\danie\desktop\informatica\vsgl2-master\version.h
+
+1572218212 c:\users\danie\desktop\informatica\vsgl2-master\vsgl2.h
+	<string>
+	<sstream>
+	<SDL2/SDL.h>
+	<SDL2/SDL_net.h>
+	<SDL2/SDL_image.h>
+	<SDL2/SDL_mixer.h>
+	<SDL2/SDL_ttf.h>
+	"vsgl2_keycode.h"
+
+1572218212 c:\users\danie\desktop\informatica\vsgl2-master\vsgl2_keycode.h
+
+1574623035 source:c:\users\danie\desktop\informatica\vsgl2-master\myapps\0010_drawing_lines\main.cpp
+	<iostream>
+	"../../vsgl2.h"
+	<ctime>
+	<stdlib.h>
+
+1575993234 source:c:\users\danie\desktop\informatica\vsgl2-master\myapps\0010_drawing_lines - copia\main.cpp
+	<iostream>
+	"../../vsgl2.h"
+	<ctime>
+	<stdlib.h>
+
+1576354074 source:c:\users\danie\desktop\informatica\vsgl2-master\myapps\0010_drawing_lines - copia - copia\main.cpp
+	<iostream>
+	"../../vsgl2.h"
+	<ctime>
+	<stdlib.h>
+
+1578423190 source:c:\users\danie\desktop\informatica\vsgl2-master\myapps\snake\main.cpp
+	<iostream>
+	"../../vsgl2.h"
+	<ctime>
+	<stdlib.h>
+
+1574524745 source:c:\users\roberto\desktop\vsgl2-master\vsgl2-master\vsgl2.cpp
+	<iostream>
+	<map>
+	"version.h"
+	"vsgl2.h"
+
+1574524745 c:\users\roberto\desktop\vsgl2-master\vsgl2-master\version.h
+
+1574524745 c:\users\roberto\desktop\vsgl2-master\vsgl2-master\vsgl2.h
+	<string>
+	<sstream>
+	<SDL2/SDL.h>
+	<SDL2/SDL_net.h>
+	<SDL2/SDL_image.h>
+	<SDL2/SDL_mixer.h>
+	<SDL2/SDL_ttf.h>
+	"vsgl2_keycode.h"
+
+1574524745 c:\users\roberto\desktop\vsgl2-master\vsgl2-master\vsgl2_keycode.h
+
+1577025779 source:c:\users\roberto\desktop\vsgl2-master\vsgl2-master\myapps\snake\main.cpp
+	<iostream>
+	"../../vsgl2.h"
+	<ctime>
+	<stdlib.h>
+
