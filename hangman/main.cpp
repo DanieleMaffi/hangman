@@ -14,6 +14,98 @@ const int HEIGHT = 720;
 const int WIDTH = 1240;
 const int DIM = 100;
 
+bool is_there(int v[], int n, char value)
+{
+    bool is_there = false;
+    for (int i = 0; i < n; i++)
+    {
+        if (v[i] == value)
+            is_there = true;
+    }
+    return is_there;
+}
+
+void update_attempts(int v[], int n, char value)
+{
+    if (!is_there(v, n, value))
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (v[i] == -1)
+            {
+                v[i] = value;
+                return;
+            }
+        }
+    }
+}
+
+void init_array(int v[], int n)
+{
+    for (int i = 0; i < n; i++)
+        v[i] = -1;
+}
+
+bool is_guessed(char guess, string guessed_word, string secret_word)
+{
+    bool is_guessed = false;
+    for (int i = 0; secret_word[i] != '\0'; i++)
+    {
+        if (secret_word.at(i) == guess)
+            is_guessed = true;
+    }
+    return is_guessed;
+}
+
+void update_word(char guess, string &guessed_word, string secret_word, int attempts[], int n)
+{
+    for (int i = 0; secret_word[i] != '\0'; i++)
+    {
+        if (secret_word.at(i) == guess)
+            guessed_word.at(i) = guess;
+        //cout << guessed_word << endl;
+        update_attempts(attempts, n, guess);
+    }
+}
+
+int my_stringlength(string s)
+{
+    int conta = 0;
+    for (int i = 0; s[i] != '\0'; i++)
+        conta++;
+    return conta;
+}
+
+void init_guessed_word(string &guessed_word, string secret_word)
+{
+    for (int i = 0; i < secret_word[i] != '\0'; i++)
+    {
+        if (i != 0)
+            guessed_word.at(i) = '_';
+    }
+}
+
+void clean_string(string &s)
+{
+    int len = my_stringlength(s);
+    int j, i;
+    for (i = 0; s[i] != '\0'; i++)
+    {
+        if (s.at(i) > 'z' || s.at(i) < 'a')
+        {
+            if (s.at(i) <= 'Z' && s.at(i) >= 'A')
+                s.at(i) += 32; //conversione a minuscole
+            else
+            {
+                for (j = i; j < len - 1; j++)
+                    s.at(j) = s.at(j + 1);
+                s.at(j) = '\0';
+                i = 0;
+            }
+        }
+    }
+}
+
 class Underscore
 {
     public:
@@ -25,7 +117,7 @@ class Underscore
 
         bool does_fit(int margin, int width, string s)
         {
-            int len = s.size();
+            int len = my_stringlength(s);
             int space = width*len + margin*len;
             if (space <= WIDTH)
                 return true;
@@ -35,8 +127,7 @@ class Underscore
 
         void init_position(string s)
         {
-            int len = s.size();
-            for (int i = 1; i < len; i++)
+            for (int i = 1; s[i] != '\0'; i++)
             {
                 x[i] += x[i - 1] + margin + width;
             }
@@ -44,75 +135,54 @@ class Underscore
 
         void draw(string s)
         {
-            int len = s.size();
-            for (int i = 0; i < len; i++)
+            for (int i = 0; s[i] != '\0'; i++)
             {
                 draw_filled_rect(x[i], y, width, height, Color(255,255,255,255));
             }
         }
 };
 
-void init_guessed_word(string &guessed_word)
-{
-    for (int i = 0; i < guessed_word.size(); i++)
-    {
-        if (i != 0)
-            guessed_word.at(i) = '_';
-    }
-}
-
-void clean_string(string &s)
-{
-    int len = s.size();
-    for (int i = 0; i < len; i++)
-    {
-        if (s.at(i) > 'z' || s.at(i) < 'a')
-        {
-            if (s.at(i) <= 'Z' && s.at(i) >= 'A')
-                s.at(i) += 32;
-            else
-            {
-                for (int j = i; j < len - 1; j++)
-                    s.at(j) = s.at(j + 1);
-                s.at(--len) = '\0';
-                i--;
-            }
-        }
-    }
-}
-
 int main(int argc, char* argv[])
 {
-    string secret_word = "paRola";
+    string secret_word = "pal   6! La";
     string guessed_word;
+
+    int errors = 0;
+    int max_errors = 10;
+    int attempts[DIM];
 
     //adatta la dimensione di '_' per rientrare completamente nello schermo
     Underscore underscore;
-    underscore.width = WIDTH/10;
+    underscore.width = WIDTH/8;
     underscore.margin = underscore.width/2;
-    underscore.height = 10;
+    underscore.height = 5;
     while(!underscore.does_fit(underscore.margin, underscore.width, secret_word))
     {
-        underscore.width -= 50;
+        underscore.width--;
+        underscore.margin = underscore.width/2;
     }
-    underscore.margin = underscore.width/2;
 
     init();
     srand(time(NULL));
     set_window(WIDTH,HEIGHT,"Hangman");
+    init_array(attempts, DIM);
 
     clean_string(secret_word);
     guessed_word = secret_word;
-    init_guessed_word(guessed_word);
+    init_guessed_word(guessed_word, secret_word);
     underscore.init_position(secret_word);
 
     cout << secret_word << endl;
     cout << guessed_word << endl;
 
-    while(!done())
+    while(!done() && errors < max_errors)
     {
         set_background_color(Color(25,25,25,255));
         underscore.draw(secret_word);
+
+        //update_word('g',guessed_word, secret_word, attempts, DIM);
+        update_word('l', guessed_word, secret_word, attempts, DIM);
+        //if(is_guessed('l', guessed_word, secret_word))
 
         update();
         //delay(5);
