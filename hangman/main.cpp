@@ -10,8 +10,8 @@ using namespace vsgl2::general;
 using namespace vsgl2::video;
 using namespace vsgl2::utils;
 
-const int HEIGHT = 720;
-const int WIDTH = 1240;
+const int HEIGHT = 1080;
+const int WIDTH = 1920;
 const int DIM = 100;
 
 bool is_there(int v[], int n, char value)
@@ -113,7 +113,7 @@ class Underscore
         int width;
         int height;
         int x[DIM] = {0};
-        int y = HEIGHT - 100;
+        int y = HEIGHT - 50;
 
         bool does_fit(int margin, int width, string s)
         {
@@ -150,6 +150,14 @@ int main(int argc, char* argv[])
     int errors = 0;
     int max_errors = 10;
     int attempts[DIM];
+
+    bool easy_mode = true;
+    bool multiplayer = true;
+
+    if (multiplayer)
+        cin >> secret_word;
+    //else
+        //secret_word = ....
 
     //adatta la dimensione di '_' per rientrare completamente nello schermo
     Underscore underscore;
