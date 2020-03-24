@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1585062180 source:c:\users\danie\desktop\impiccato\main.cpp
+	<iostream>
+	<cstring>
+
+1585065693 source:c:\users\danie\desktop\informatica\vsgl2-master\myapps\hangman\impiccato\main.cpp
+	<iostream>
+	<cstring>
+

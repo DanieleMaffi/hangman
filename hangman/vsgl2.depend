@@ -69,10 +69,11 @@
 	<ctime>
 	<stdlib.h>
 
-1584199627 source:c:\users\danie\desktop\informatica\vsgl2-master\myapps\hangman\main.cpp
+1585060973 source:c:\users\danie\desktop\informatica\vsgl2-master\myapps\hangman\main.cpp
 	<iostream>
 	"../../vsgl2.h"
 	<ctime>
 	<stdlib.h>
 	<string>
+	<fstream>
 
