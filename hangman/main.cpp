@@ -16,10 +16,35 @@ const int WIDTH = 1240;
 const int DIM = 100;
 
 bool easy_mode = true;      ///nella mod facile i tentativi vengono salvati in una stringa, cosi che il giocatore conosca le lettere gia inserite
-bool multiplayer = false;    ///se vera viene attivata la mod a due giocatori
+bool multiplayer = true;    ///se vera viene attivata la mod a due giocatori
 
 string parole[120000];
-string images[] = {"1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", "10.png", "11.png"};
+string images[] = {"images/1.png", "images/2.png", "images/3.png", "images/4.png", "images/5.png", "images/6.png", "images/7.png", "images/8.png", "images/9.png", "images/10.png", "images/11.png"};
+
+
+///disegna i bottoni e li aggiorna se vengono premuti con il cursore
+bool draw_buttons(int position_y, int position_x, bool &variable, int button_dimension)
+{
+    int mouse_x = get_mouse_x();
+    int mouse_y = get_mouse_y();
+
+    if (mouse_left_button_pressed() && mouse_x >= position_x && mouse_x <= position_x + 120 && mouse_y >= position_y && mouse_y <= position_y + 120)
+        variable = true;
+
+    if (mouse_left_button_pressed() && mouse_x >= position_x + 200 && mouse_x <= position_x + 320 && mouse_y >= position_y && mouse_y <= position_y + 120)
+        variable = false;
+
+    if (variable)
+    {
+        draw_image("images/si-btn-selected.png", position_x, position_y, button_dimension, button_dimension);
+        draw_image("images/no-btn.png", position_x + 200, position_y, button_dimension, button_dimension);
+    }
+    else
+    {
+        draw_image("images/no-btn-selected.png", position_x + 200, position_y, button_dimension, button_dimension);
+        draw_image("images/si-btn.png", position_x, position_y, button_dimension, button_dimension);
+    }
+}
 
 ///disegna a schermo i vari tentativi
 void draw_attempts(string guesses)
@@ -29,7 +54,10 @@ void draw_attempts(string guesses)
     for(int i = 0; i < guesses.size(); i++)
     {
         if (i % 8 == 0)
+        {
             margin_top += 50;
+            margin_lr = 390;
+        }
         string letter(1, guesses.at(i));
         draw_text("Montserrat-Regular.otf", 40, letter, WIDTH - margin_lr, margin_top, Color(255,255,255,255));
         margin_lr -= 40;
@@ -39,14 +67,7 @@ void draw_attempts(string guesses)
 ///disegna a schermo l'immagine dell' impiccato
 void draw_hangman(int errors)
 {
-    if (errors > 1)
-    {
-        draw_image(images[errors - 1], 10, 10, 226, 312);
-    }
-    else if (errors == 1)
-    {
-        draw_image(images[errors - 1], 10, 225, 225, 31);
-    }
+        draw_image(images[errors - 1], 10, 10, 345, 312);
 }
 
 bool parola_corretta(const string &s)
@@ -243,67 +264,121 @@ class Underscore
 
 int main(int argc, char* argv[])
 {
-    string secret_word = "pal   6! La";
+    string secret_word;
     string guessed_word;
     string guesses;
 
+    int phases = -1; //'-1' selezione mod, '0' corrisponde alla fase di inserimento se la modalità multiplayer è vera,  '1' corrisponde alla fase di gioco, mentre '2' alla fase finale
     int errors = 0;
     int max_errors = 11;
     //int attempts[DIM];
 
-    srand(time(NULL));
+    bool play_again = true;
 
-    if (multiplayer)
-        cin >> secret_word;
-    else
-    {
-        int num_parole = carica_parole("italian", parole);
-        secret_word = parole[(rand()*0xFFFF + rand()) % num_parole];
-    }
-
-    ///adatta la dimensione di '_' per rientrare completamente nello schermo
     Underscore underscore;
     underscore.width = WIDTH/8;
     underscore.margin = underscore.width/2;
     underscore.height = 5;
-    while(!underscore.does_fit(underscore.margin, underscore.width, secret_word))
-    {
-        underscore.width--;
-        underscore.margin = underscore.width/2;
-    }
+
+    srand(time(NULL));
 
     init();
     set_window(WIDTH,HEIGHT,"Hangman");
     //init_array(attempts, DIM);
 
-    clean_string(secret_word);
-    guessed_word = secret_word;
-    init_guessed_word(guessed_word, secret_word);
-    underscore.init_position(secret_word);
-
-    cout << secret_word << endl;
-    cout << guessed_word << endl;
-
-    while(!done() && errors < max_errors)
+    while(!done() && play_again)
     {
         set_background_color(Color(25,25,25,255));
-        underscore.draw(secret_word, guessed_word, underscore.width);
-        draw_hangman(errors);
 
-        if (easy_mode)
+        if (phases == -1)
         {
-            draw_attempts(guesses);
-            draw_image("cornice.png", WIDTH - 420, 20, 400, 500);
-            draw_text("Montserrat-Regular.otf",40,"Tentativi:", WIDTH - 310, 35, Color(255,255,255,255));
+            draw_text("Montserrat-Regular.otf", 100,"SELEZIONA MODALITÀ", 0, 0, Color(255,255,255,255));
+            draw_text("Montserrat-Regular.otf", 80,"Modalità facile", 0, 300, Color(255,255,255,255));
+            draw_text("Montserrat-Regular.otf", 80,"Multiplayer", 0, 500, Color(255,255,255,255));
+            draw_text("Montserrat-Regular.otf", 50,"premi spazio per continuare", 0, 100, Color(255,255,255,255));
+
+            draw_buttons(300, 700, easy_mode, 120);
+            draw_buttons(500, 700, multiplayer, 120);
+
+            if (is_pressed(VSGL_SPACE))
+                phases = 0;
         }
 
-        cout << errors << endl;
+        if (phases == 0) ///prima fase di inserimento della parola segreta in modalita multigiocatore
+        {
+            draw_filled_rect(0,0,WIDTH,HEIGHT,Color(25,25,25,255));
+            if (multiplayer)
+            {
+                draw_text("Montserrat-Regular.otf", 100, "Inserisci parola", 0, 0, Color(255,255,255,255));
+                update();
+                secret_word = read_text("Montserrat-Regular.otf", 200, 20, HEIGHT/2 - 200, Color(255,255,255,255), 50);
+                clean_string(secret_word);
+            }
+            else
+            {
+                int num_parole = carica_parole("italian", parole);
+                secret_word = parole[(rand()*0xFFFF + rand()) % num_parole];
+            }
 
-        update_word('y',guessed_word, secret_word, /*attempts, DIM,*/ guesses, errors);
-        update_word('o',guessed_word, secret_word, /*attempts, DIM,*/ guesses, errors);
+            ///adatta la dimensione di '_' per rientrare completamente nello schermo
+            while(!underscore.does_fit(underscore.margin, underscore.width, secret_word))
+            {
+                underscore.width--;
+                underscore.margin = underscore.width/2;
+            }
+            guessed_word = secret_word;
+            init_guessed_word(guessed_word, secret_word);
+            underscore.init_position(secret_word);
+            phases++;
+        }
+        else if (!multiplayer && phases == 0)
+            phases = 1;
 
-        //if(is_guessed('l', guessed_word, secret_word))
+        if (phases == 1) ///gioco
+        {
+            draw_filled_rect(0,0,WIDTH,HEIGHT,Color(25,25,25,255));
+            underscore.draw(secret_word, guessed_word, underscore.width);
+            draw_hangman(errors);
+            if (easy_mode)
+            {
+                draw_attempts(guesses);
+                draw_image("images/cornice.png", WIDTH - 420, 20, 400, 500);
+                draw_text("Montserrat-Regular.otf", 40, "Tentativi:", WIDTH - 310, 35, Color(255,255,255,255));
+            }
+            update();
+            string guess = read_text("Montserrat-Regular.otf", 300, WIDTH/2 - 200, HEIGHT/2 - 200, Color(255,255,255,255), 1);
+            update_word(guess[0],guessed_word, secret_word, /*attempts, DIM,*/ guesses, errors);
+            //if(is_guessed('l', guessed_word, secret_word))
+            if (guessed_word == secret_word || errors == max_errors)
+                phases++;
+        }
 
+        if (phases == 2) ///fase finale in cui si chiede al giocatore se vuole giocare ancora
+        {
+            draw_filled_rect(0,0,WIDTH,HEIGHT,Color(25,25,25,255));
+            if (guessed_word == secret_word)
+                draw_text("Montserrat-Regular.otf", 100, "HAI VINTO!", 0, 0, Color(255,255,255,255));
+            else
+                draw_text("Montserrat-Regular.otf", 100, "HAI PERSO!", 0, 0, Color(255,255,255,255));
+            draw_text("Montserrat-Regular.otf", 100, "Vuoi giocare ancora?", 0, 120, Color(255,255,255,255));
+            draw_text("Montserrat-Regular.otf", 50,"premi spazio per continuare", 0, HEIGHT - 100, Color(255,255,255,255));
+            draw_buttons(HEIGHT/2, WIDTH/2 - 200, play_again, 200);
+            if (is_pressed(VSGL_SPACE))
+            {
+                if (play_again)
+                {
+                    secret_word.clear();
+                    guessed_word.clear();
+                    guesses.clear();
+                    phases = -1;
+                    errors = 0;
+                    underscore.width = WIDTH/8;
+                    underscore.margin = underscore.width/2;
+                    for (int i = 0; i < DIM; i++)
+                        underscore.x[i] = 0;
+                }
+            }
+        }
         update();
     }
     close();
