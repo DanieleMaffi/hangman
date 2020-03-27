@@ -11,8 +11,8 @@ using namespace vsgl2::general;
 using namespace vsgl2::video;
 using namespace vsgl2::utils;
 
-const int HEIGHT = 720;
-const int WIDTH = 1240;
+const int HEIGHT = 1080;
+const int WIDTH = 1920;
 const int DIM = 100;
 
 bool easy_mode = true;      ///nella mod facile i tentativi vengono salvati in una stringa, cosi che il giocatore conosca le lettere gia inserite
